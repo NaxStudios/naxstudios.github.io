@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Narrow Jumbotron Template for Bootstrap</title>
+    <title>Casino : Future gaming</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -18,6 +18,8 @@
     <link href="css/jumbotron-narrow.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -26,56 +28,108 @@
     <![endif]-->
 
 <script>
+
     $( document ).ready(function() {
         // Handler for .ready() called.
         $(".peliruutu").hide();
     });
+
+
+function auth() {
+    var authRef = new Firebase("https://fuga-be-rt.firebaseio.com");
+    authRef.onAuth(authDataCallback);
+
+    function authDataCallback(authData) {
+        if (authData) {
+            console.log("User " + authData.uid + " is logged in with " + authData.provider);
+            username = authData.uid;
+            $(".username").text(username);
+            /*
+             lompsaListRef.on("value", function(snapshot) {
+             console.log(snapshot.val());
+             //updateLompsa(snapshot.val()[username]);
+             }, function (errorObject) {
+             console.log("The read failed: " + errorObject.code);
+             });
+             */
+        } else {
+            console.log("User is logged out");
+            authRef.authAnonymously(function (error, authData) {
+                if (error) {
+                    console.log("Login Failed!", error);
+                    // $(".example-leaderboard").innerHTML = "Login Failed!";
+                } else {
+                    console.log("Authenticated successfully with payload:", authData);
+                    username = authData.uid;
+                    $(".username").text(username);
+                    $('#nimiModal').modal('show');
+                }
+            });
+
+        }
+    }
+
+}
+
 </script>
 </head>
 
 <body>
 
-<div class="container">
-    <div class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="#">lopsa</a></li>
-                           </ul>
-        </nav>
-        <h3 class="text-muted">Casino</h3>
+    <div class="container">
+        <div class="header clearfix">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h3 class="text-muted">Casino</h3>
+                </div>
+                <div class="col-lg-4">
+                    <p class="pull-right username"></p>
+                </div>
+                <div class="col-lg-2">
+                    <p class="pull-right">Lopsa €</p>
+                </div>
+
+            </div>
+            <!--
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="#logout" class="username"></a></li>
+                    <li role="presentation" class="active"><a href="#">lopsa</a></li>
+                </ul>
+            </nav>
+            -->
+        </div>
+        <div class="row peliruutu">
+            <div class="col-lg-2">
+                <button type="button" class="btn btn-danger">Lotto</button>
+            </div>
+            <div class="col-lg-8">
+
+                <img src="images/slot-machine.gif" width="100%"/>
+                <button type="button" class="btn btn-success btn-lg " style="font-size: 30px;width: 100%;margin-top: 10px">PELLAA</button>
+
+            </div>
+
+
+            <div class="col-lg-2">
+                <button type="button" class="btn btn-danger pull-right">slotti</button>
+            </div>
+        </div>
+        <div class="row paaruutu ">
+            <div class="col-lg-3">
+                <button type="button" class="btn btn-danger btn-lg">Lotto</button>
+            </div>
+            <div class="col-lg-6">
+
+                <img src="images/blue-play-button-hi.png" width="100%"/>
+            </div>
+            <div class="col-lg-3 ">
+                <button type="button" class="btn btn-danger btn-lg pull-right" id="paa-slotti">slotti</button>
+            </div>
+        </div>
+
+
     </div>
-    <div class="row peliruutu">
-        <div class="col-lg-2">
-            <button type="button" class="btn btn-danger">Lotto</button>
-        </div>
-        <div class="col-lg-8">
-
-            <img src="images/slot-machine.gif" width="100%"/>
-
-            <button type="button" class="btn btn-success btn-lg " style="font-size: 30px;width: 100%;margin-top: 10px">&nbsp;&nbsp;&nbsp;&nbsp;PELLAA&nbsp;&nbsp;&nbsp;&nbsp;</button>
-
-        </div>
-
-
-        <div class="col-lg-2">
-            <button type="button" class="btn btn-danger pull-right">slotti</button>
-        </div>
-    </div>
-    <div class="row paaruutu ">
-        <div class="col-lg-3">
-            <button type="button" class="btn btn-danger btn-lg">Lotto</button>
-        </div>
-        <div class="col-lg-6">
-
-            <img src="images/blue-play-button-hi.png" width="100%"/>
-        </div>
-        <div class="col-lg-3 ">
-            <button type="button" class="btn btn-danger btn-lg pull-right" id="paa-slotti">slotti</button>
-        </div>
-    </div>
-
-
-</div>
 
     <footer class="footer">
         <p>&copy; 2016 Future gaming </p>
@@ -88,12 +142,30 @@
     $( "#paa-slotti" ).click(function() {
         $(".paaruutu").hide();
         $(".peliruutu").show();
+        auth();
     });
 
 
 
 
 </script>
-<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+
+<!-- Anna pelaaja nimi -->
+<div class="modal fade" id="nimiModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Anna pelaajanimi</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Tallenna</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
